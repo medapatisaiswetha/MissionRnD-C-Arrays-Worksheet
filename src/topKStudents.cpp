@@ -25,8 +25,9 @@ struct student ** topKStudents(struct student *students, int len, int k)
 {
 	int l = 0;
 	struct student temp;
-	struct student **astudent = &students;
-	if (students == 0 || len <= 0||k<=0)
+	struct student **astudent = NULL;
+	astudent = (struct student**)malloc(len * sizeof(struct student*));
+	if (students == 0 || len <= 0 || k <= 0)
 		return NULL;
 	else
 	{
@@ -40,29 +41,38 @@ struct student ** topKStudents(struct student *students, int len, int k)
 				}
 				else if (students[i].score < students[j].score)
 				{
-					temp = *astudent[j];
-					students[j] = *astudent[i];
-					*astudent[i] = temp;
+					temp = students[j];
+					students[j] = students[i];
+					students[i] = temp;
 				}
 			}
 		}
 	}
-	if (k == 1)
+	
+	for (int i = 0, j = len - 1; i < j && i != j; i++, j--)
 	{
-		return &astudent[0];
+		temp = students[j];
+		students[j] = students[i];
+		students[i] = temp;
 	}
-	else if (k > len)
+
+	if (k > len)
 	{
-		return &astudent[0];
-	}
-	else if (k < len)
-	{
-		for (int i = k; i >=0; i--)
+		for (int i = 0; i < len; i++)
 		{
-			for (int j = (len - 1 - k); j >= 0; j--)
-			{
-				return &astudent[j];
-			}
+			astudent[i] = &students[i];
 		}
+		return astudent;
+	}
+	else
+	{
+		int start = len - 1, end = len - k, i = 0;
+		while (start >= end)
+		{
+			astudent[i] = &students[start];
+			i++;
+			start--;
+		}
+		return astudent;
 	}
 }
